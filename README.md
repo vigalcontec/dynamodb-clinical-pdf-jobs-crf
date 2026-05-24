@@ -1,9 +1,9 @@
-# AWS DynamoDB Template
+# Clinical PDF Jobs DynamoDB Table
 
 [![Terraform](https://img.shields.io/badge/Terraform-1.10%2B-7B42BC?logo=terraform)](https://www.terraform.io/)
 [![AWS](https://img.shields.io/badge/AWS-DynamoDB-FF9900?logo=amazondynamodb)](https://aws.amazon.com/dynamodb/)
 
-Production-ready AWS DynamoDB table template with Terraform and GitHub Actions CI/CD.
+DynamoDB table for tracking clinical PDF table extraction jobs. Part of the **Clinical RAG Foundry** project.
 
 ---
 

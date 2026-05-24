@@ -4,11 +4,11 @@
 
 locals {
   # ─────────────────────────────────────────────────────────────────────────────
-  # Project Configuration (UPDATE THESE)
+  # Project Configuration
   # ─────────────────────────────────────────────────────────────────────────────
-  table_name   = "my-dynamodb-table" # DynamoDB table name (without env suffix)
-  project_name = "bootstrap"         # Project name for tagging
-  company_name = "vigalcontec"       # Company name for resource naming
+  table_name   = "clinical-pdf-jobs-crf"    # DynamoDB table name (without env suffix)
+  project_name = "clinical-rag-foundry" # Project name for tagging
+  company_name = "vigalcontec"          # Company name for resource naming
 
   # ─────────────────────────────────────────────────────────────────────────────
   # AWS Configuration
@@ -29,15 +29,33 @@ locals {
   # Point-in-time recovery (recommended for production)
   point_in_time_recovery = true
 
-  # TTL configuration (set to "" to disable)
+  # TTL configuration - auto-delete old job records after 90 days
   ttl_attribute = "ttl"
 
   # Stream configuration: "DISABLED", "KEYS_ONLY", "NEW_IMAGE", "OLD_IMAGE", "NEW_AND_OLD_IMAGES"
+  # Enable streams if you need to trigger Lambda on job status changes
   stream_view_type = "DISABLED"
 
   # ─────────────────────────────────────────────────────────────────────────────
   # Table Schema Configuration
   # ─────────────────────────────────────────────────────────────────────────────
+  #
+  # Schema Design:
+  # ┌─────────────────────────────────────────────────────────────────────────┐
+  # │ Entity          │ PK                  │ SK                             │
+  # ├─────────────────┼─────────────────────┼────────────────────────────────┤
+  # │ Job Metadata    │ JOB#{job_id}        │ METADATA                       │
+  # │ Table Record    │ JOB#{job_id}        │ TABLE#{num}#PAGE#{page}        │
+  # └─────────────────────────────────────────────────────────────────────────┘
+  #
+  # GSI1 Access Patterns:
+  # ┌─────────────────────────────────────────────────────────────────────────┐
+  # │ Query                │ GSI1PK              │ GSI1SK                     │
+  # ├──────────────────────┼─────────────────────┼────────────────────────────┤
+  # │ Jobs by product      │ PRODUCT#{name}      │ {created_at}               │
+  # │ Failed tables        │ STATUS#FAILED       │ {failed_at}                │
+  # │ Successful tables    │ STATUS#SUCCESS      │ {processed_at}             │
+  # └─────────────────────────────────────────────────────────────────────────┘
 
   # Primary key
   partition_key = {
@@ -51,18 +69,13 @@ locals {
   }
 
   # Global Secondary Indexes (GSIs)
-  # Add GSIs as needed for your access patterns
   global_secondary_indexes = [
-    # Example GSI for querying by product
-    # {
-    #   name            = "GSI1"
-    #   partition_key   = "GSI1PK"
-    #   sort_key        = "GSI1SK"
-    #   projection_type = "ALL"  # ALL, KEYS_ONLY, or INCLUDE
-    #   # Only for PROVISIONED billing mode:
-    #   # read_capacity  = 5
-    #   # write_capacity = 5
-    # }
+    {
+      name            = "GSI1"
+      partition_key   = "GSI1PK"
+      sort_key        = "GSI1SK"
+      projection_type = "ALL"
+    }
   ]
 
   # ─────────────────────────────────────────────────────────────────────────────

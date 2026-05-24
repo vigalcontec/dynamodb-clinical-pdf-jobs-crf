@@ -49,7 +49,18 @@ resource "aws_dynamodb_table" "main" {
     type = local.sort_key.type
   }
 
-  # Provisioned capacity (only used if billing_mode = "PROVISIONED")
+  # GSI1 attributes (for querying by product/status)
+  attribute {
+    name = "GSI1PK"
+    type = "S"
+  }
+
+  attribute {
+    name = "GSI1SK"
+    type = "S"
+  }
+
+  # TTL configuration
   dynamic "ttl" {
     for_each = local.ttl_attribute != "" ? [1] : []
     content {
