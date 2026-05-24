@@ -6,9 +6,9 @@ locals {
   # ─────────────────────────────────────────────────────────────────────────────
   # Project Configuration
   # ─────────────────────────────────────────────────────────────────────────────
-  table_name   = "clinical-pdf-jobs-crf"    # DynamoDB table name (without env suffix)
-  project_name = "clinical-rag-foundry" # Project name for tagging
-  company_name = "vigalcontec"          # Company name for resource naming
+  table_name   = "clinical-pdf-jobs-crf" # DynamoDB table name (without env suffix)
+  project_name = "clinical-rag-foundry"  # Project name for tagging
+  company_name = "vigalcontec"           # Company name for resource naming
 
   # ─────────────────────────────────────────────────────────────────────────────
   # AWS Configuration
