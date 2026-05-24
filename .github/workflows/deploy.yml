@@ -26,18 +26,16 @@ on:
         type: choice
         options: [deploy, destroy]
         default: deploy
-  # ─────────────────────────────────────────────────────────────────────────────
-  # UNCOMMENT BELOW TO ENABLE AUTOMATIC DEPLOYMENTS
-  # ─────────────────────────────────────────────────────────────────────────────
-  # push:
-  #   branches: [main, develop, "feature/*", "release/*"]
-  #   paths:
-  #     - 'terraform/**'
-  #     - '.github/workflows/deploy.yml'
-  # pull_request:
-  #   branches: [main, develop]
-  #   paths:
-  #     - 'terraform/**'
+
+  push:
+    branches: [main, develop, "feature/*", "release/*"]
+    paths:
+      - 'terraform/**'
+      - '.github/workflows/deploy.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'terraform/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
